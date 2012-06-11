@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Finatra by capotej</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Finatra</h1>
+        <p>finagle + sinatra</p>
+        <p class="view"><a href="https://github.com/capotej/finatra">View the Project on GitHub <small>capotej/finatra</small></a></p>
+        <ul>
+          <li><a href="https://github.com/capotej/finatra/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/capotej/finatra/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/capotej/finatra">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Finatra</h1>
+
+<h3>Description</h3>
+
+<p>Finatra is a sinatra clone backed by scala/finagle written by <a href="http://twitter.com/capotej">@capotej</a> and <a href="http://twitter.com/twoism">@twoism</a></p>
+
+<h3>Features</h3>
+
+<ul>
+<li><p>The routing DSL you've come to know and love</p></li>
+<li><p>Asynchronous, uses Finagle-HTTP/Netty</p></li>
+<li><p>Multipart file upload/form handling</p></li>
+<li><p>Modular app support</p></li>
+<li><p>A testing helper</p></li>
+<li><p>Built in static file server (note: not designed for huge files(&gt;100mb))</p></li>
+</ul><h3>Installation</h3>
+
+<p>Add the repo and dependency to your pom.xml (sbt users to the left)</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;repositories&gt;</span>
+  <span class="nt">&lt;repository&gt;</span>
+    <span class="nt">&lt;id&gt;</span>repo.juliocapote.com<span class="nt">&lt;/id&gt;</span>
+    <span class="nt">&lt;url&gt;</span>http://repo.juliocapote.com<span class="nt">&lt;/url&gt;</span>
+  <span class="nt">&lt;/repository&gt;</span>
+<span class="nt">&lt;/repositories&gt;</span>
+
+<span class="nt">&lt;dependencies&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.posterous<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>finatra<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.6.0<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span>
+</pre>
+</div>
+
+
+<h3>Configuring</h3>
+
+<p>import the FinatraServer and FinatraApp</p>
+
+<div class="highlight">
+<pre><span class="k">import</span> <span class="nn">com.posterous.finatra.</span><span class="o">{</span><span class="nc">FinatraServer</span><span class="o">,</span> <span class="nc">FinatraApp</span><span class="o">}</span>
+</pre>
+</div>
+
+
+<p>register your apps</p>
+
+<div class="highlight">
+<pre><span class="nc">FinatraServer</span><span class="o">.</span><span class="n">register</span><span class="o">(</span><span class="nc">Example</span><span class="o">)</span>
+<span class="nc">FinatraServer</span><span class="o">.</span><span class="n">register</span><span class="o">(</span><span class="nc">MyResource</span><span class="o">)</span>
+</pre>
+</div>
+
+
+<p>start the server</p>
+
+<div class="highlight">
+<pre><span class="nc">FinatraServer</span><span class="o">.</span><span class="n">start</span><span class="o">()</span> <span class="c1">//Defaults: 7070, "docroot"</span>
+</pre>
+</div>
+
+
+<h3>Example project</h3>
+
+<p>Check out <a href="http://github.com/capotej/finatra-helloworld">finatra-helloworld</a> for an example finatra project</p>
+
+<h3>API</h3>
+
+<div class="highlight">
+<pre><span class="k">package</span> <span class="nn">com.posterous.finatra</span>
+
+<span class="c1">//You can "mount" your resources on a prefix</span>
+<span class="k">object</span> <span class="nc">MyResource</span> <span class="k">extends</span> <span class="nc">FinatraApp</span><span class="o">(</span><span class="s">"/my"</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// responds to /my/lol</span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/lol"</span><span class="o">)</span> <span class="o">{</span> <span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">lol</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span> <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="k">object</span> <span class="nc">Example</span> <span class="k">extends</span> <span class="nc">FinatraApp</span> <span class="o">{</span>
+
+  <span class="c1">// set content type</span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">)</span> <span class="o">{</span> 
+    <span class="n">contentType</span><span class="o">(</span><span class="s">"application/html"</span><span class="o">)</span>
+    <span class="s">"&lt;h1&gt;asd&lt;/h1&gt;"</span>
+  <span class="o">}</span> 
+
+  <span class="c1">// set the status code</span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/error"</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">status</span><span class="o">(</span><span class="mi">500</span><span class="o">)</span>
+    <span class="s">"error!"</span>
+  <span class="o">}</span>
+
+  <span class="c1">// redirect </span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/redirector"</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">redirect</span><span class="o">(</span><span class="s">"/gohere"</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="c1">// send json</span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/somejson"</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">toJson</span><span class="o">(</span><span class="nc">Map</span><span class="o">(</span><span class="s">"foo"</span> <span class="o">-&gt;</span> <span class="s">"bar"</span><span class="o">))</span>
+  <span class="o">}</span>
+
+  <span class="c1">// setting headers</span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/headertest"</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">headers</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span><span class="s">"bar"</span><span class="o">)</span>
+    <span class="s">"check heads"</span>
+  <span class="o">}</span>
+
+  <span class="c1">// reading headers</span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/foo"</span><span class="o">)</span> <span class="o">{</span> 
+    <span class="n">request</span><span class="o">.</span><span class="n">headers</span> 
+  <span class="o">}</span>
+
+  <span class="c1">// will get param /simple?lol=value</span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/simple"</span><span class="o">)</span> <span class="o">{</span> 
+    <span class="n">params</span><span class="o">(</span><span class="s">"lol"</span><span class="o">)</span> 
+  <span class="o">}</span>
+
+  <span class="c1">// will get /doit/2004</span>
+  <span class="n">get</span><span class="o">(</span><span class="s">"/doit/:year"</span><span class="o">)</span> <span class="o">{</span> 
+    <span class="n">params</span><span class="o">(</span><span class="s">"year"</span><span class="o">)</span> 
+  <span class="o">}</span>
+
+  <span class="c1">// respond to post</span>
+  <span class="n">post</span><span class="o">(</span><span class="s">"/file"</span><span class="o">)</span> <span class="o">{</span>
+    <span class="s">"file posted"</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre>
+</div>
+
+
+<h3>File Uploads</h3>
+
+<div class="highlight">
+<pre>
+<span class="k">object</span> <span class="nc">UploadExample</span> <span class="k">extends</span> <span class="nc">FinatraApp</span> <span class="o">{</span>
+
+  <span class="c1">//Example curl:</span>
+  <span class="c1">//curl -F myfile=@/home/capotej/images/bad-advice-cat.jpeg http://localhost:7070/</span>
+
+  <span class="c1">//the multiPart method returns MultiPartItem objects, which have some handy methods</span>
+  <span class="n">post</span><span class="o">(</span><span class="s">"/upload"</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">multiPart</span><span class="o">(</span><span class="s">"myfile"</span><span class="o">).</span><span class="n">headers</span> 
+
+    <span class="n">multiPart</span><span class="o">(</span><span class="s">"myfile"</span><span class="o">).</span><span class="n">contentType</span>
+
+    <span class="n">multiPart</span><span class="o">(</span><span class="s">"myfile"</span><span class="o">).</span><span class="n">data</span>
+
+    <span class="n">multiPart</span><span class="o">(</span><span class="s">"myfile"</span><span class="o">).</span><span class="n">filename</span>
+
+    <span class="n">multiPart</span><span class="o">(</span><span class="s">"myfile"</span><span class="o">).</span><span class="n">writeToFile</span><span class="o">(</span><span class="s">"/tmp/file.jpg"</span><span class="o">)</span>
+  <span class="o">}</span>
+
+
+  <span class="c1">//Form Example</span>
+  <span class="c1">//curl -F foo=bar http://localhost:7070/formsubmit</span>
+
+  <span class="n">post</span><span class="o">(</span><span class="s">"/formsubmit"</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">multiPart</span><span class="o">(</span><span class="s">"foo"</span><span class="o">).</span><span class="n">data</span> <span class="c1">// "bar"</span>
+  <span class="o">}</span>
+
+
+</pre>
+</div>
+
+
+<h2>Writing tests</h2>
+
+<p>Finatra includes FinatraSpec for easy test writing</p>
+
+<div class="highlight">
+<pre><span class="k">import</span> <span class="nn">com.posterous.finatra.FinatraSpec</span>
+
+<span class="k">class</span> <span class="nc">IntHandlerSpec</span> <span class="k">extends</span> <span class="nc">FinatraSpec</span> <span class="o">{</span>
+
+  <span class="nc">FinatraServer</span><span class="o">.</span><span class="n">register</span><span class="o">(</span><span class="nc">IntHandler</span><span class="o">)</span>
+
+  <span class="k">class</span> <span class="nc">`GET for a missing key'`</span> <span class="o">{</span>
+
+    <span class="n">get</span><span class="o">(</span><span class="s">"/int/foo"</span><span class="o">)</span>
+
+    <span class="nd">@Test</span> <span class="k">def</span> <span class="n">`returns 404`</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">lastResponse</span><span class="o">.</span><span class="n">statusCode</span><span class="o">.</span><span class="n">must</span><span class="o">(</span><span class="n">be</span><span class="o">(</span><span class="mi">404</span><span class="o">))</span>
+    <span class="o">}</span>
+
+  <span class="o">}</span>
+
+  <span class="k">class</span> <span class="nc">`POST for a missing key, creates it with 1'`</span> <span class="o">{</span>
+
+    <span class="n">post</span><span class="o">(</span><span class="s">"/int/foo"</span><span class="o">)</span>
+    <span class="n">get</span><span class="o">(</span><span class="s">"/int/foo"</span><span class="o">)</span>
+
+    <span class="nd">@Test</span> <span class="k">def</span> <span class="n">`returns 200`</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">lastResponse</span><span class="o">.</span><span class="n">statusCode</span><span class="o">.</span><span class="n">must</span><span class="o">(</span><span class="n">be</span><span class="o">(</span><span class="mi">200</span><span class="o">))</span>
+      <span class="n">lastResponse</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">toString</span><span class="o">(</span><span class="s">"UTF8"</span><span class="o">).</span><span class="n">must</span><span class="o">(</span><span class="n">be</span><span class="o">(</span><span class="s">"1"</span><span class="o">))</span>
+    <span class="o">}</span>
+
+  <span class="o">}</span>
+  <span class="k">class</span> <span class="nc">`POST for an existing key, with a value of 10'`</span> <span class="o">{</span>
+
+    <span class="n">post</span><span class="o">(</span><span class="s">"/int/foo2"</span><span class="o">,</span> <span class="nc">List</span><span class="o">(</span><span class="nc">Tuple2</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span> <span class="s">"10"</span><span class="o">))</span><span class="k">:_</span><span class="kt">*</span><span class="o">)</span>
+    <span class="n">get</span><span class="o">(</span><span class="s">"/int/foo2"</span><span class="o">)</span>
+
+    <span class="nd">@Test</span> <span class="k">def</span> <span class="n">`returns 200`</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">lastResponse</span><span class="o">.</span><span class="n">statusCode</span><span class="o">.</span><span class="n">must</span><span class="o">(</span><span class="n">be</span><span class="o">(</span><span class="mi">200</span><span class="o">))</span>
+      <span class="n">lastResponse</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">toString</span><span class="o">(</span><span class="s">"UTF8"</span><span class="o">).</span><span class="n">must</span><span class="o">(</span><span class="n">be</span><span class="o">(</span><span class="s">"10"</span><span class="o">))</span>
+    <span class="o">}</span>
+
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre>
+</div>
+
+
+<h2>License</h2>
+
+<p>Copyright (C) 2012 Julio Capote</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/capotej">capotej</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
